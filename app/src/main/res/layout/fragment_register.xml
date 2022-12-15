@@ -6,6 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".ui.register.RegisterFragment">
 
+    <xyz.teamgravity.imageradiobutton.GravityRadioGroup
+        android:id="@+id/rgImagePicker"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:grgRadioButtonCheckedId="@+id/rbMale"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/etName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <xyz.teamgravity.imageradiobutton.GravityImageRadioButton
+            android:id="@+id/rbMale"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:girbImage="@drawable/male"
+            app:girbPressedTextColor="@color/white"
+            app:girbUnpressedTextColor="?attr/colorPrimary" />
+
+        <xyz.teamgravity.imageradiobutton.GravityImageRadioButton
+            android:id="@+id/rbFemale"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:girbImage="@drawable/female"
+            app:girbPressedTextColor="@color/white"
+            app:girbUnpressedTextColor="?attr/colorPrimary" />
+    </xyz.teamgravity.imageradiobutton.GravityRadioGroup>
+
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"

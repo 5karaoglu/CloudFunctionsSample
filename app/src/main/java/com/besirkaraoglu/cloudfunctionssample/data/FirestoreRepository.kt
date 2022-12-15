@@ -35,12 +35,12 @@ class FirestoreRepository
             emit(Resource.Loading())
             userCollection.document(user.uid!!).set(user).await()
             val token = Firebase.messaging.token.await()
-            tokenCollection.document(sharedPreferences.getUid()!!).set(Token(token)).await()
+            tokenCollection.document(user.uid!!).set(Token(token)).await()
             emit(Resource.Success(null))
         }catch (e: Exception){
             emit(Resource.Error(e.message ?: "Process failed!"))
+            e.printStackTrace()
         }
-
     }
 
     suspend fun addToken() = flow<Resource<Any?>> {
@@ -69,7 +69,7 @@ class FirestoreRepository
         val snapshotListener =
             EventListener<QuerySnapshot> { value, error ->
                 if (error != null){
-                   trySend(Resource.Error(error.message ?: "Process failed!"))
+                    trySend(Resource.Error(error.message ?: "Process failed!"))
                 }else{
                     val list = mutableListOf<User>()
                     val result = value?.documents
@@ -83,6 +83,20 @@ class FirestoreRepository
             }
         val registration = userCollection.addSnapshotListener(snapshotListener)
         awaitClose { registration.remove() }
+    }
+
+    suspend fun getChatUsers(userId: String, receiverId: String) = flow<Resource<Pair<User,User>>> {
+        try {
+            emit(Resource.Loading())
+            val cUser = userCollection.document(userId).get().await()
+            val rUser = userCollection.document(receiverId).get().await()
+            val pair = Pair(cUser.toObject(User::class.java)!!
+                ,rUser.toObject(User::class.java)!!)
+
+            emit(Resource.Success(pair))
+        }catch (e: Exception){
+            emit(Resource.Error(e.message ?: "Process failed!"))
+        }
     }
 
     fun addMessagesSnapshot(receiverId: String) = flow<Resource<List<Message>>> {

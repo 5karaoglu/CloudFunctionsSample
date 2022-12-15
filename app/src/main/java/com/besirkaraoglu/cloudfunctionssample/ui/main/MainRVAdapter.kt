@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.besirkaraoglu.cloudfunctionssample.R
 import com.besirkaraoglu.cloudfunctionssample.model.User
+import com.bumptech.glide.Glide
 
 class MainRVAdapter(private val onClick: (User) -> Unit) :
     ListAdapter<User, MainRVAdapter.ViewHolder>(CustomDiffCallback) {
 
 
-    class ViewHolder(view: View, val onClick: (User) -> Unit) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(private val view: View, val onClick: (User) -> Unit) : RecyclerView.ViewHolder(view) {
         private val userTextView: TextView = itemView.findViewById(R.id.tvName)
         private val userImageView: ImageView = itemView.findViewById(R.id.iv)
         private var currentUser: User? = null
@@ -33,7 +34,11 @@ class MainRVAdapter(private val onClick: (User) -> Unit) :
 
             userTextView.text = user.name
             if (user.photoUrl != null) {
-                /*userImageView.setImageResource(user.photoUrl)*/
+                Glide.with(view)
+                    .load(user.photoUrl)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(userImageView)
             } else {
                 userImageView.setImageResource(R.drawable.ic_launcher_foreground)
             }

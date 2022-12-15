@@ -26,15 +26,21 @@ class MainViewModel
     val TAG = "MainViewModel"
 
 
-    private val _userId = MutableLiveData<String>()
-    val userId get() = _userId
+    private val _user = MutableLiveData<User>()
+    val user get() = _user
+
+    private val _currentUser = MutableLiveData<User>()
+    val currentUser get() = _currentUser
 
     private val _users = MutableLiveData<Resource<List<User>>>()
     val users get() = _users
 
-    fun setCurrentUserId(uid: String){
-        _userId.value = uid
+    fun setCurrentUserId(user: User){
+        _user.value = user
     }
+
+    private val _chatUsers = MutableLiveData<Resource<Pair<User,User>>>()
+    val chatUsers get() = _chatUsers
 
     private val _addUserResult = MutableLiveData<Boolean>()
     val addUserResult get() = _addUserResult
@@ -45,7 +51,7 @@ class MainViewModel
     private val _sendMessageResult = MutableLiveData<Resource<Any?>>()
     val sendMessageResult get() = _sendMessageResult
 
-    fun addUser(name: String, photoUrl: String?) = viewModelScope.launch(Dispatchers.IO) {
+    fun addUser(name: String, photoUrl: String?) = viewModelScope.launch {
         val uid = UUID.randomUUID().toString()
         val user = User(uid, name, photoUrl)
         firestoreRepository.addOrUpdateUser(user).collect {
@@ -73,11 +79,23 @@ class MainViewModel
     fun getUsers() = viewModelScope.launch(Dispatchers.IO) {
         firestoreRepository.getUsers().collect{
             _users.postValue(it)
+            if (it is Resource.Success){
+                for (i in it.data!!){
+                    if (i.uid!! == sharedPreferences.getUid()!!)
+                        _currentUser.postValue(i)
+                }
+            }
+        }
+    }
+
+    fun getChatUsers(userId: String, receiverId: String) = viewModelScope.launch(Dispatchers.IO) {
+        firestoreRepository.getChatUsers(userId, receiverId).collect{
+            _chatUsers.postValue(it)
         }
     }
 
     fun getMessages() = viewModelScope.launch(Dispatchers.IO) {
-        firestoreRepository.getMessages(userId.value!!).collect{
+        firestoreRepository.getMessages(user.value!!.uid!!).collect{
             _messages.postValue(it)
         }
     }

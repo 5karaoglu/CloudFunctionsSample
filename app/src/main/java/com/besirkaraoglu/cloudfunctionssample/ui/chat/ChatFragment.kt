@@ -16,6 +16,7 @@ import com.besirkaraoglu.cloudfunctionssample.core.util.viewBinding
 import com.besirkaraoglu.cloudfunctionssample.databinding.FragmentChatBinding
 import com.besirkaraoglu.cloudfunctionssample.databinding.FragmentMainBinding
 import com.besirkaraoglu.cloudfunctionssample.model.Message
+import com.besirkaraoglu.cloudfunctionssample.model.User
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,26 +26,38 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private val binding by viewBinding(FragmentChatBinding::bind)
     private val viewModel by activityViewModels<MainViewModel>()
 
-    private lateinit var receiverUid: String
+    private lateinit var receiver: User
+    private lateinit var sender: User
     private lateinit var adapter: ChatAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel.userId.value == null){
+        if (viewModel.user.value == null){
             Log.e(TAG, "onViewCreated: No userId set!")
             findNavController().navigateUp()
             return
         }else{
-            receiverUid = viewModel.userId.value ?: ""
-            adapter = ChatAdapter(receiverUid){message -> adapterOnClick(message) }
+            receiver = viewModel.user.value ?: User()
+            sender = viewModel.currentUser.value ?: User()
+            adapter = ChatAdapter(sender,receiver){message -> adapterOnClick(message) }
+        }
+
+        initComponents()
+        initObservers()
+        initRecyclerView()
+        getMessages()
+    }
+
+
+    private fun initComponents() {
+        binding.tvName.text = receiver.name
+        binding.buttonBack.setOnClickListener {
+            findNavController().navigateUp()
         }
         binding.buttonSend.setOnClickListener {
             sendMessage()
         }
-        initObservers()
-        initRecyclerView()
-        getMessages()
     }
 
     private fun initObservers() {
@@ -76,7 +89,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private fun sendMessage(){
         val text = binding.etText.text.toString()
         if (text.isNotEmpty()){
-            viewModel.sendMessage(receiverUid,text)
+            viewModel.sendMessage(receiver.uid!!,text)
         }
     }
 

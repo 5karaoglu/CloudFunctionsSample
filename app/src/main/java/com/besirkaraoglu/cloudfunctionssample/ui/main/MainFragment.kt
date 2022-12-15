@@ -43,7 +43,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun adapterOnClick(user: User) {
-        viewModel.setCurrentUserId(user.uid!!)
+        viewModel.setCurrentUserId(user)
         findNavController().navigate(R.id.action_mainFragment_to_chatFragment)
     }
 
