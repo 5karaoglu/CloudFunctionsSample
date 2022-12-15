@@ -18,8 +18,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideFirestoreRepository(): FirestoreRepository =
-        FirestoreRepository(Firebase.firestore)
+    fun provideFirestoreRepository(sharedPreferences: SharedPreferences): FirestoreRepository =
+        FirestoreRepository(Firebase.firestore, sharedPreferences)
 
     @Provides
     @Singleton

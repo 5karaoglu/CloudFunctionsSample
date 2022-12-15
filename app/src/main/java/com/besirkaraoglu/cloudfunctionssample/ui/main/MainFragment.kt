@@ -15,6 +15,8 @@ import com.besirkaraoglu.cloudfunctionssample.core.util.Resource
 import com.besirkaraoglu.cloudfunctionssample.core.util.viewBinding
 import com.besirkaraoglu.cloudfunctionssample.databinding.FragmentMainBinding
 import com.besirkaraoglu.cloudfunctionssample.model.User
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
