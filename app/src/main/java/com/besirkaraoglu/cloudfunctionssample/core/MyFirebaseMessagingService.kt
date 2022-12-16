@@ -23,18 +23,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyFirebaseMessagingService
-    @Inject constructor(
-        private val firestoreRepository: FirestoreRepository
-    ): FirebaseMessagingService() {
+class MyFirebaseMessagingService (): FirebaseMessagingService() {
 
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        GlobalScope.launch(Dispatchers.IO) {
+        /*GlobalScope.launch(Dispatchers.IO) {
             firestoreRepository.updateToken(token)
-        }
+        }*/
     }
 
     @SuppressLint("LongLogTag")
